@@ -12,6 +12,15 @@
 
 import csv
 import re
+import logging
+
+
+logging.basicConfig(filename='errors.log',
+                    encoding='utf-8',
+                    level=logging.ERROR,
+                    filemode='a')
+
+logger = logging.getLogger(__name__)
 
 # Создание файла с предметами
 subjects = ["Математика", "Физика", "Химия", "Биология", "История",
@@ -35,8 +44,9 @@ class NameValidator:
 
     def __set__(self, instance, value):
         if not re.match(r'^[А-Я][а-яА-Я\s]*$', value):
-            raise ValueError("ФИО должно содержать только буквы"
-                             " кириллицы и начинаться с заглавной буквы")
+            message_error = "ФИО должно содержать только буквы кириллицы и начинаться с заглавной буквы"
+            logger.error(message_error)
+            raise ValueError (message_error)
         instance.__name = value
 
 
@@ -53,12 +63,16 @@ class Subject:
 
     def add_score(self, score):
         if score < 2 or score > 5:
-            raise ValueError("Оценка должна быть в диапазоне от 2 до 5")
+            message_error = "Оценка должна быть в диапазоне от 2 до 5"
+            logger.error(message_error)
+            raise ValueError(message_error)
         self.scores.append(score)
 
     def add_test_result(self, result):
         if result < 0 or result > 100:
-            raise ValueError("Баллы за тест должны быть в диапазоне от 0 до 100")
+            message_error = "Баллы за тест должны быть в диапазоне от 0 до 100"
+            logger.error(message_error)
+            raise ValueError(message_error)
         self.tests.append(result)
 
     def average_score(self):
@@ -89,12 +103,16 @@ class Student:
 
     def add_score(self, subject_name, score):
         if subject_name not in self.subjects:
-            raise ValueError("Такого предмета нет в системе")
+            message_error = "Такого предмета нет в системе"
+            logger.error(message_error)
+            raise ValueError(message_error)
         self.subjects[subject_name].add_score(score)
 
     def add_test_result(self, subject_name, result):
         if subject_name not in self.subjects:
-            raise ValueError("Такого предмета нет в системе")
+            message_error = "Такого предмета нет в системе"
+            logger.error(message_error)
+            raise ValueError(message_error)
         self.subjects[subject_name].add_test_result(result)
 
     def average_score(self):
@@ -113,10 +131,10 @@ if __name__ == '__main__':
     student.add_score("Математика", 5)
     student.add_score("Информатика", 5)
     student.add_score("Физика", 4)
-    student.add_score("Информатика", 4)
-    student.add_test_result("Математика", 95)
+    student.add_score("Информатика", 5)
+    student.add_test_result("Математика", 94)
     student.add_test_result("Информатика", 90)
-    student.add_test_result("Физика", 80)
+    student.add_test_result("Физика", 100)
 
     print(student)
 
